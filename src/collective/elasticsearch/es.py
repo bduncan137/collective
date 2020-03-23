@@ -36,7 +36,8 @@ class ElasticResult(object):
         assert 'sort' not in query_params
         assert 'start' not in query_params
         self.es = es
-        self.bulk_size = es.get_setting('bulk_size', 50)
+        size = query_params['size'] or 50
+        self.bulk_size = es.get_setting('bulk_size', size)
         qassembler = getMultiAdapter((getRequest(), es), IQueryAssembler)
         dquery, self.sort = qassembler.normalize(query)
         self.query = qassembler(dquery)
@@ -49,7 +50,7 @@ class ElasticResult(object):
         self.results = {
             0: result['hits']
         }
-        self.count = result['total']
+        self.count = result['total']['value']
         self.query_params = query_params
 
     def __len__(self):
@@ -158,13 +159,12 @@ class ElasticSearchCatalog(object):
         query_params['stored_fields'] = query_params.get(
             'stored_fields', 'path.path')
         query_params['size'] = self.get_setting('bulk_size', 50)
-
+        query_params['headers'] = {'Content-Type': 'application/json'}
         body = {'query': query}
         if sort is not None:
             body['sort'] = sort
 
         return self.connection.search(index=self.index_name,
-                                      doc_type=self.doc_type,
                                       body=body,
                                       **query_params)
 
@@ -307,7 +307,6 @@ class ElasticSearchCatalog(object):
         adapter = getMultiAdapter((getRequest(), self), IMappingProvider)
         mapping = adapter()
         self.connection.indices.put_mapping(
-            doc_type=self.doc_type,
             body=mapping,
             index=self.index_name)
 
@@ -336,7 +335,3 @@ class ElasticSearchCatalog(object):
         if self.index_version:
             return '%s_%i' % (self.index_name, self.index_version)
         return self.index_name
-
-    @property
-    def doc_type(self):
-        return self.catalogtool.getId().lower()
