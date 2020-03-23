@@ -14,7 +14,7 @@ long_description = '\n\n'.join([
 
 setup(
     name='collective.elasticsearch',
-    version='9.9.0',
+    version='9.9.2',
     description="elasticsearch integration with plone",
     long_description=long_description,
     # Get more from https://pypi.org/classifiers/
@@ -48,7 +48,7 @@ setup(
     python_requires="==2.7",
     install_requires=[
         'setuptools',
-        'elasticsearch>=6.0.0,<7.0.0',
+        'elasticsearch>=7.0.0,<8.0.0',
         'plone.app.registry',
         'plone.api',
         'collective.monkeypatcher',
