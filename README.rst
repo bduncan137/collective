@@ -58,7 +58,7 @@ Only tested with Plone 5 with Dexterity types.
 
 It should also work with Plone 4.3 and archetypes.
 
-Deployed with Elasticsearch 7.6.1
+Deployed with Elasticsearc 7.6.0
 
 State
 -----

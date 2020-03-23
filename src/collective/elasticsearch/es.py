@@ -36,8 +36,7 @@ class ElasticResult(object):
         assert 'sort' not in query_params
         assert 'start' not in query_params
         self.es = es
-        size = query_params['size'] or 50
-        self.bulk_size = es.get_setting('bulk_size', size)
+        self.bulk_size = es.get_setting('bulk_size', 50)
         qassembler = getMultiAdapter((getRequest(), es), IQueryAssembler)
         dquery, self.sort = qassembler.normalize(query)
         self.query = qassembler(dquery)
